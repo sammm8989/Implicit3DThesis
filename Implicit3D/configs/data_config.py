@@ -58,6 +58,7 @@ class Config(object):
             self.__layout_avg_file = os.path.join(self.metadata_path, 'preprocessed/layout_avg_file.pkl')
             self.bins = self.__initiate_bins()
             self.evaluation_path = './evaluation/sunrgbd'
+            self.time_data = "data/time_data"
             if not os.path.exists(self.train_test_data_path):
                 os.mkdir(self.train_test_data_path)
 

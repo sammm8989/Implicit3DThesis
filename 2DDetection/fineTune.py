@@ -15,10 +15,12 @@ from torchvision.models.detection import FasterRCNN
 from torchvision.models.detection.rpn import AnchorGenerator
 
 
-datasetSplit = 0.70
-datasetVal = 0.15
-datasetSize = 10336
-amount_of_epochs = 20
+dataset_split_train_test = 0.80
+batch_size = 4
+dataset_size = 10336
+amount_of_epochs = 21
+
+
 
 
 NYU40CLASSES = ['void',
@@ -70,29 +72,13 @@ class CustomDataset(Dataset):
     def __len__(self):
         return len(self.data_list)    
 
+
 #get pretrained model
 def make_model(num_class):
     
-    backbone = torchvision.models.mobilenet_v2(pretrained=True).features
-
-    backbone.out_channels = 1280
-
-    anchor_generator = AnchorGenerator(
-        sizes=((32, 64, 128, 256, 512),),
-        aspect_ratios=((0.5, 1.0, 2.0),)
-    )
-    roi_pooler = torchvision.ops.MultiScaleRoIAlign(
-        featmap_names=['0'],
-        output_size=7,
-        sampling_ratio=2
-    )
-
-    model = FasterRCNN(
-        backbone,
-        num_classes=num_class + 1,
-        rpn_anchor_generator=anchor_generator,
-        box_roi_pool=roi_pooler
-    )
+    model = torchvision.models.detection.fasterrcnn_resnet50_fpn()
+    in_features = model.roi_heads.box_predictor.cls_score.in_features
+    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_class)
 
     return model
 
@@ -124,69 +110,34 @@ def get_transform(train=True):
     image_transforms.append(T.ToTensor())
     return T.Compose(image_transforms), T.Compose(target_transforms)
 
-def calculatemAP(coco_evaluation):
-    list_eval = coco_evaluation.coco_eval['bbox'].stats.tolist()
-    ap_values = []
-    ap_values.append(list_eval[0])
-    ap_values.append(list_eval[3])
-    ap_values.append(list_eval[4])
-    ap_values.append(list_eval[5])
-    mAP = np.average(ap_values)
-    return mAP
-
-def calculatemAR(coco_evaluation):
-    list_eval = coco_evaluation.coco_eval['bbox'].stats.tolist()
-    ap_values = []
-    ap_values.append(list_eval[6])
-    ap_values.append(list_eval[7])
-    ap_values.append(list_eval[8])
-    ap_values.append(list_eval[9])
-    ap_values.append(list_eval[10])
-    ap_values.append(list_eval[11])
-    mAR = np.average(ap_values)
-    return mAR
-
 if __name__ == "__main__":
     num_classes = len(NYU40CLASSES) 
     model = make_model(num_classes)
-    dictionaries = arrayFromSUNRGBD("./Implicit3D/data/sunrgbd/sunrgbd_train_test_data/","./Implicit3D/data/time_data",1,int(datasetSize*datasetSplit))
-    dictionaries1 = arrayFromSUNRGBD("./Implicit3D/data/sunrgbd/sunrgbd_train_test_data/","./Implicit3D/data/time_data",int(datasetSize*datasetSplit),int((datasetSplit+datasetVal)*datasetSplit))
-
+    dictionaries = arrayFromSUNRGBD("./Implicit3D/data/sunrgbd/sunrgbd_train_test_data/","./Implicit3D/data/time_data",1,int(dataset_size*dataset_split_train_test))
 
     transform_image, transform_target = get_transform(train=True)
     dataset = CustomDataset(transform_target, dictionaries)
-    dataset1 = CustomDataset(transform_target, dictionaries)
+
 
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     data_loader = torch.utils.data.DataLoader(
         dataset,
-        batch_size=2,
+        batch_size=batch_size,
         shuffle=True,
         num_workers=4,
         collate_fn=utils.collate_fn
     )
-
-
-    data_loader_val = torch.utils.data.DataLoader(
-        dataset1,
-        batch_size=2,
-        shuffle=False,
-        num_workers=4,
-        collate_fn=utils.collate_fn
-    )
-
-    model = make_model(num_classes)
-
     model.to(device)
 
     params = [p for p in model.parameters() if p.requires_grad]
+
     optimizer = torch.optim.SGD(
-        params,
-        lr=0.005,
-        momentum=0.9,
-        weight_decay=0.0005
+    params,
+    lr=0.005,
+    momentum=0.9,
+    weight_decay=0.0005
     )
 
     lr_scheduler = torch.optim.lr_scheduler.StepLR(
@@ -194,7 +145,6 @@ if __name__ == "__main__":
         step_size=3,
         gamma=0.1
     )
-
 
     epoch = 0
 

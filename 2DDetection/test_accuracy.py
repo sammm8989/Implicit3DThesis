@@ -9,9 +9,11 @@ from lib.engine import evaluate
 import torchvision.transforms as transforms
 from torchvision import transforms as T
 from PIL import Image
+import numpy as np
 
-datasetSplit = 0.85
-datasetSize = 10336
+dataset_split_train_test = 0.80
+batch_size = 5
+dataset_size = 10336
 
 
 #custom dataset with information about boundingboxes,image_path,labels and iscrowd
@@ -90,8 +92,31 @@ def make_model(num_class):
     return model
 
 
+def calculatemAP(coco_evaluation):
+    list_eval = coco_evaluation.coco_eval['bbox'].stats.tolist()
+    ap_values = []
+    ap_values.append(list_eval[0])
+    ap_values.append(list_eval[3])
+    ap_values.append(list_eval[4])
+    ap_values.append(list_eval[5])
+    mAP = np.average(ap_values)
+    return mAP
+
+def calculatemAR(coco_evaluation):
+    list_eval = coco_evaluation.coco_eval['bbox'].stats.tolist()
+    ap_values = []
+    ap_values.append(list_eval[6])
+    ap_values.append(list_eval[7])
+    ap_values.append(list_eval[8])
+    ap_values.append(list_eval[9])
+    ap_values.append(list_eval[10])
+    ap_values.append(list_eval[11])
+    mAR = np.average(ap_values)
+    return mAR
+
+
 if __name__ == "__main__":
-    dictionaries = arrayFromSUNRGBD("./Implicit3D/data/sunrgbd/sunrgbd_train_test_data/","./Implicit3D/data/time_data",int(datasetSize*datasetSplit),datasetSize)
+    dictionaries = arrayFromSUNRGBD("./Implicit3D/data/sunrgbd/sunrgbd_train_test_data/","./Implicit3D/data/time_data",int(dataset_size*dataset_split_train_test),dataset_size)
 
     
     transform_image, transform_target = get_transform(train=True)
@@ -99,7 +124,7 @@ if __name__ == "__main__":
 
     data_loader_test = torch.utils.data.DataLoader(
     dataset_test,
-    batch_size=5,
+    batch_size=batch_size,
     shuffle=False,
     num_workers=4,
     collate_fn=utils.collate_fn
@@ -108,4 +133,5 @@ if __name__ == "__main__":
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model = make_model(41)
     model.to(device)
-    evaluate(model, data_loader_test, device, False)
+    returnValues = evaluate(model, data_loader_test, device, False)
+    print("mAP = " + str(calculatemAP(returnValues)) + " and mAR = " +  str(calculatemAR(returnValues)))
