@@ -43,7 +43,7 @@ Go to the /Implicit3D and run:
 ```
 python project.py build
 ```
-Download the pretrained checkpoint (https://stduestceducn-my.sharepoint.com/personal/2015010912010_std_uestc_edu_cn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F2015010912010%5Fstd%5Fuestc%5Fedu%5Fcn%2FDocuments%2Fprojects%2FImplicit3DUnderstanding%2Fout%2Ftotal3d%2F20110611514267%2Ezip&parent=%2Fpersonal%2F2015010912010%5Fstd%5Fuestc%5Fedu%5Fcn%2FDocuments%2Fprojects%2FImplicit3DUnderstanding%2Fout%2Ftotal3d&ga=1) and unzip it into out/total3d/20110611514267/
+Download the pretrained checkpoint (https://kuleuven-my.sharepoint.com/:u:/g/personal/sam_winant_student_kuleuven_be/EdjmhkpQfPZDrKlTIVtfwTEBdMgVhvHAWdpAM_MCbfPc_w?e=7FmZmz) and unzip it into out/total3d/20110611514267/
 
 To check if everything works fine try to run the demo:
 ```
