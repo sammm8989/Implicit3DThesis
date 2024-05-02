@@ -72,7 +72,7 @@ python generate_time_data.py
 ```
 ## Training and Testing
 
-To train the 2D detector with finetunring run the following command in the root directory (the parameters can be tuned in the pyhon file):
+To train the 2D detector with finetunring run the following command in the root directory (the parameters can be tuned in the pyhon file). The pretrained model can be found at https://kuleuven-my.sharepoint.com/:u:/g/personal/sam_winant_student_kuleuven_be/EdjmhkpQfPZDrKlTIVtfwTEBdMgVhvHAWdpAM_MCbfPc_w?e=3QiEBT
 ```
 python 2DDetection/fineTune.py 
 ```
