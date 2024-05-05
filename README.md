@@ -1,5 +1,5 @@
 
-# Thesis Fiten-Winant implementation of Implicit3D
+# Thesis Fiten-Winant improvement of Implicit3D
 
 This is the github page of the master thesis of Fiten-Winant, where we propose an server implentation of the Implicit3D [https://arxiv.org/pdf/2103.06422] 3D scene understanding.
 
@@ -82,10 +82,11 @@ To test the accuracy of the 2D detector we run in the root folder:
 ```
 python 2DDetection/test_accuracy.py
 ```
-To assess the average time the Implicit3D takes to do predictions you can run (the 95 can be changed to the amount of samples you take to calculate the average):
+To assess the average time the Implicit3D takes to do predictions you can run (the 100 can be changed to the amount of samples you take to calculate the average):
 ```
-CUDA_VISIBLE_DEVICES=0 python main.py out/total3d/20110611514267/out_config.yaml --mode demo_with_time --avg_amount 95
+CUDA_VISIBLE_DEVICES=0 python main.py out/total3d/20110611514267/out_config.yaml --mode demo_with_time --avg_amount 100
 ```
+All the data is afterwards printed and can be used to make custom visualisations. A basic pie chart is already generated.
 
 ## Server
 
@@ -93,3 +94,4 @@ Go to Implicit3D/server.py and insert the hostname of the server at the last lin
 ```
 python3 server.py out/total3d/20110611514267/out_config.yaml
 ```
+To asses the response time client.py is included. This python script can connect to a server and times the response time. In the server.py and in the process_API.py are print command that gives the timing list for certain subprocesses. All this data can be put in timing.py and plots can be generated.
