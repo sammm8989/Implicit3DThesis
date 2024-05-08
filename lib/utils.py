@@ -1,4 +1,3 @@
-#https://raw.githubusercontent.com/pytorch/vision/main/references/detection/utils.py
 import datetime
 import errno
 import os

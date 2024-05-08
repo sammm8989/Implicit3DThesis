@@ -1,4 +1,3 @@
-#comes from https://raw.githubusercontent.com/pytorch/vision/main/references/detection/engine.py and is changed by Sam Winant
 import math
 import sys
 import time
@@ -6,37 +5,9 @@ import time
 import torch
 import torchvision.models.detection.mask_rcnn
 import lib.utils as utils
-from lib.coco_eval import CocoEvaluator
-from lib.coco_utils import get_coco_api_from_dataset
-import torchvision.transforms as T
+from coco_eval import CocoEvaluator
+from coco_utils import get_coco_api_from_dataset
 
-
-NYU40CLASSES = ['void',
-                'wall', 'floor', 'cabinet', 'bed', 'chair',
-                'sofa', 'table', 'door', 'window', 'bookshelf',
-                'picture', 'counter', 'blinds', 'desk', 'shelves',
-                'curtain', 'dresser', 'pillow', 'mirror', 'floor_mat',
-                'clothes', 'ceiling', 'books', 'refridgerator', 'television',
-                'paper', 'towel', 'shower_curtain', 'box', 'whiteboard',
-                'person', 'night_stand', 'toilet', 'sink', 'lamp',
-                'bathtub', 'bag', 'otherstructure', 'otherfurniture', 'otherprop']
-
-coco_to_nyu_mapping = {
-    -1: 'void',
-    65: 'bed',
-    62: 'chair',
-    63: 'sofa',
-    67: 'table',
-    71: 'door',
-    68: 'window',
-    69: 'desk',
-    66: 'mirror',
-    82: 'refridgerator',
-    72: 'television',
-    1: 'person',
-    70: 'toilet',
-    81: 'sink',
-}
 
 def train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq, scaler=None):
     model.train()
@@ -102,7 +73,7 @@ def _get_iou_types(model):
 
 
 @torch.inference_mode()
-def evaluate(model, data_loader, device, COCO_output=False):
+def evaluate(model, data_loader, device):
     n_threads = torch.get_num_threads()
     # FIXME remove this and make paste_masks_in_image run on the GPU
     torch.set_num_threads(1)
@@ -122,12 +93,6 @@ def evaluate(model, data_loader, device, COCO_output=False):
             torch.cuda.synchronize()
         model_time = time.time()
         outputs = model(images)
-        #if the model is trained on COCO dataset we need to change the labels to the NYU40 labels
-        if(COCO_output):
-            outputs = []
-            old_output = model(images)
-            for i in range(len(old_output)):
-                outputs.append(translate_prediction(old_output[i]))
 
         outputs = [{k: v.to(cpu_device) for k, v in t.items()} for t in outputs]
         model_time = time.time() - model_time
@@ -148,29 +113,3 @@ def evaluate(model, data_loader, device, COCO_output=False):
     coco_evaluator.summarize()
     torch.set_num_threads(n_threads)
     return coco_evaluator
-
-def translate_prediction(predictions):
-    new_predictions = []
-    indexesToDelete = []
-    labels = predictions['labels']
-    for i in range(len(labels)):
-        try:
-            NYU_number = NYU40CLASSES.index(coco_to_nyu_mapping[int(labels[i])])
-            if(NYU_number != -1):
-                new_predictions.append(NYU_number)
-            else:
-                indexesToDelete.append(i)
-        except:
-            indexesToDelete.append(i)
-
-
-
-    mask = torch.ones(predictions["boxes"].shape[0], dtype=torch.bool)
-    mask[indexesToDelete] = False
-
-    predictions["boxes"] = predictions["boxes"][mask]  
-    predictions["scores"] = predictions["scores"][mask] 
-
-    predictions["labels"] = torch.Tensor(new_predictions).int()
-
-    return predictions

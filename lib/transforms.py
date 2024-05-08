@@ -1,4 +1,3 @@
-#https://raw.githubusercontent.com/pytorch/vision/main/references/detection/transforms.py
 from typing import Dict, List, Optional, Tuple, Union
 
 import torch

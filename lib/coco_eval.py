@@ -1,4 +1,3 @@
-#https://raw.githubusercontent.com/pytorch/vision/main/references/detection/coco_eval.py
 import copy
 import io
 from contextlib import redirect_stdout

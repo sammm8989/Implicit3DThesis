@@ -1,10 +1,9 @@
-#https://raw.githubusercontent.com/pytorch/vision/main/references/detection/coco_utils.py
 import os
 
 import torch
 import torch.utils.data
 import torchvision
-import lib.transforms as T
+import transforms as T
 from pycocotools import mask as coco_mask
 from pycocotools.coco import COCO
 

@@ -19,7 +19,7 @@ import wandb
 wandb.init(project="2D_detector")
 
 batch_size = 6
-amount_of_epochs = 21
+amount_of_epochs = 11
 
 
 NYU40CLASSES = ['void',
@@ -139,8 +139,8 @@ def calculatemAR(coco_evaluation):
 
 num_classes = len(NYU40CLASSES) 
 model = make_model(num_classes)
-train_dict = arrayFromSUNRGBD("../data/coco_dataset_train.json")
-val_dict = arrayFromSUNRGBD("../data/coco_dataset_val.json")
+train_dict = arrayFromSUNRGBD("./data/coco_dataset_train.json")
+val_dict = arrayFromSUNRGBD("./data/coco_dataset_val.json")
 
 transform_image, transform_target = get_transform(train=True)
 train_dataset = CustomDataset(transform_target, train_dict)
@@ -210,5 +210,6 @@ for epoch in range(amount_of_epochs):
         torch.save(model.state_dict(), f'epoch_{epoch}.pth')
     
     wandb.log({"epoch": epoch, "mAR": mAR, "mAP" : mAP, "lr": optimizer.param_groups[0]['lr']})
-torch.save(model.state_dict(), 'Implicit3D/fine_tuned.pth')
+    
+torch.save(model.state_dict(), 'fine_tuned.pth')
 print("Succesfully transfer learned 2D detector")
