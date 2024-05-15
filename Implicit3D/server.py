@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from PIL import Image
 from process_API import run, initiate
 import argparse
@@ -6,6 +6,9 @@ from configs.config_utils import CONFIG
 import io
 import numpy as np
 from time import time
+import json
+import gzip
+
 
 
 
@@ -21,6 +24,10 @@ parser.add_argument('--sweep', action='store_true')
 cfg = CONFIG(parser)
 cfg.config['mode'] = 'demo'
 initiate(cfg)
+
+preprocess = []
+calculations = []
+
 app = Flask(__name__)
 
 
@@ -32,11 +39,8 @@ def upload_photo():
     if 'cam' not in request.files:
         return jsonify({'error': 'No file part'})
     
-
-    
     photo = request.files['photo']
     cam = request.files["cam"]
-
 
     buffer_content = cam.read()
 
@@ -46,11 +50,15 @@ def upload_photo():
 
     stream = io.BytesIO(photo.read())
     image = Image.open(stream).convert("RGB")
-    
-    json_data = run(image,array)
-    
-    print("Time = "+str(time()-start))
-    return json_data
 
+    preprocess.append(time() - start)
+    #print data to asses response time
+    #print("preprocess = " + str(preprocess))
+   
+    compressed_data = run(image,array)
+     
+    return compressed_data
 if __name__ == '__main__':
-    app.run(debug=False, host = "127.0.0.1")
+    app.run(debug=False, host = "192.168.0.24")
+
+

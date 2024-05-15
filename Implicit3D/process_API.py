@@ -4,7 +4,7 @@
 # updated by Sam Winant to make faster response time
 
 from net_utils.utils import load_device, load_model
-import pickle
+import json
 from net_utils.utils import CheckpointIO
 from configs.config_utils import mount_external_config
 import numpy as np
@@ -19,6 +19,8 @@ from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision import transforms
 from net_utils.libs import get_layout_bdb_sunrgbd, get_rotation_matix_result, get_bdb_evaluation
 from time import time
+import gzip
+
 
 HEIGHT_PATCH = 256
 WIDTH_PATCH = 256
@@ -28,6 +30,10 @@ device = 0
 net = 0
 cfg = 0
 objectDetector = 0
+
+twodet = []
+implicit = []
+zip_time = []
 
 data_transforms = transforms.Compose([
     transforms.Resize((HEIGHT_PATCH, WIDTH_PATCH)),
@@ -46,15 +52,13 @@ def load_2D_Detection(num_class):
 
 
 def get_bounding_boxes(photo, threshold):
+
     image_tensor = transforms.ToTensor()(photo)
     image_tensor = image_tensor.unsqueeze(0) 
     image_tensor = image_tensor.to(device)
 
-
-    start = time()
     with torch.no_grad():
         prediction = objectDetector(image_tensor)
-    print("Small = "+ str(time()-start))
 
     bdb2D_pos = []
     size_cls = []
@@ -173,16 +177,55 @@ def initiate(cfg_begin):
     
     net.train(cfg.config['mode'] == 'train')
     objectDetector.to(device)
-    print("all the things are ok")
+    print("All the things are ok")
 
+def transform_dict(og_dictioniary):
+    new_dictioniary = {}
+
+
+    new_dictioniary["layout"] = og_dictioniary["layout"].tolist()
+    new_dictioniary["cam_R"] = og_dictioniary["cam_R"].tolist()
+    new_dictioniary["class_id"] = og_dictioniary["class_id"]
+
+    bigList = []
+    for i in og_dictioniary["bdb"]:
+        smallDict = {}
+        smallDict["basis"] = i["basis"].tolist()
+        smallDict["coeffs"] = i["coeffs"].tolist()
+        smallDict["centroid"] = i["centroid"].tolist()
+        smallDict["classid"] = int(i["classid"])
+        bigList.append(smallDict)
+    new_dictioniary["bdb"] = bigList
+
+    masterList = []
+    for i in og_dictioniary["objects"]:
+        slaveDict = {}
+        slaveDict["nameObject"] = str(i["nameObject"])
+        slaveDict["v"] = i["v"].tolist()
+        slaveDict["f"] = i["f"].tolist()
+        masterList.append(slaveDict)
+    new_dictioniary["objects"] = masterList
+
+    return new_dictioniary
 
 def run(image, camera):
+    global implicit
+    global twodet
+    global zip_time
+    start = time()
     data = load_demo_data(device,image,camera)
+    twodet.append(time() - start)
+    #print data to asses response time
+    #print("TwoDetections = " + str(twodet))
+
     start = time()
     with torch.no_grad():
         est_data = net(data)
 
-    print("Big model = " + str(time()-start))
+    implicit.append(time()-start)
+    #print data to asses response time
+    #print("Implicit calculations =" + str(implicit))
+    start = time()
 
     lo_bdb3D_out = get_layout_bdb_sunrgbd(cfg.bins_tensor, est_data['lo_ori_reg_result'],
                                           torch.argmax(est_data['lo_ori_cls_result'], 1),
@@ -246,7 +289,13 @@ def run(image, camera):
         objects.append(mesh_obj)
 
     return_dict["objects"] = objects
-    serialized_data = pickle.dumps(return_dict)
 
-    return serialized_data
+    json_data = json.dumps(transform_dict(return_dict))
+    compressed = gzip.compress(json_data.encode(),compresslevel=1)
 
+
+    zip_time.append(time() - start)
+    #print data to asses response time
+    #print("zip_time = " + str(zip_time))
+
+    return compressed

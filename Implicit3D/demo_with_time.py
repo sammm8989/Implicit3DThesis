@@ -113,6 +113,7 @@ def load_demo_data(demo_path, device):
 
     boxes = dict()
 
+
     bdb2D_pos, size_cls = get_bounding_boxes(image, 0.7)
 
 
@@ -164,7 +165,7 @@ def load_demo_data(demo_path, device):
 
 
 def run(cfg, example):
-    add_timing("start")
+    add_timing("Start")
     cfg.config["demo_path"] = "data/time_data/"+str(example)
     
 
@@ -180,19 +181,18 @@ def run(cfg, example):
     '''Load device'''
 
     device = load_device(cfg)
-    add_timing("load the cuda/cpu device")
     '''Load net'''
     cfg.log_string('Loading model.')
     net = load_model(cfg, device=device)
 
     checkpoint.register_modules(net=net)
     cfg.log_string(net)
-    add_timing("load_model")
+    add_timing("Load Implicit Model")
 
 
     '''Load existing checkpoint'''
     checkpoint.parse_checkpoint()
-    add_timing("add weights from model")
+    add_timing("Add weights from model")
     cfg.log_string('-' * 100)
 
     '''Load data'''
@@ -202,14 +202,14 @@ def run(cfg, example):
     data = load_demo_data(cfg.config['demo_path'], device)
     if data == True:
         return True
-    add_timing("load_data")
+    add_timing("Do 2D detections")
 
 
     '''Run demo'''
     net.train(cfg.config['mode'] == 'train')
     with torch.no_grad():
         est_data = net(data)
-    add_timing("do predictions")
+    add_timing("Do predictions Implicit")
     '''write and visualize outputs'''
     from net_utils.libs import get_layout_bdb_sunrgbd, get_rotation_matix_result, get_bdb_evaluation
     from scipy.io import savemat
@@ -279,5 +279,5 @@ def run(cfg, example):
                     'f': current_faces[obj_id].cpu().numpy()}
 
         write_obj(file_path, mesh_obj)
-    add_timing("save files")    
+    add_timing("Save files")    
     return timing_dict

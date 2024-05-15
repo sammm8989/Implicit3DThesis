@@ -56,23 +56,23 @@ if __name__ == '__main__':
                     if key not in data_dict:
                         data_dict[key] = []
                     data_dict[key].append(value)
+        #This makes a plot of the calculations time but the data_dict is also printed so data van be handled in other 
+        #python scripts
+        #print(data_dict)
 
-        print(data_dict)
         import numpy as np
         import matplotlib.pyplot as plt
 
-        # Calculate the average values
         averages = {}
         for key, value in data_dict.items():
-            if key != 'start' and key != 'total':
+            if key != 'Start' and key != 'Total':
                 averages[key] = sum(value) / len(value)
 
-        # Exclude 'start' and 'total' from the keys
         keys = list(averages.keys())
         total = 0
         for key in keys:
             total += averages[key]
-        # Calculate the total average
+
         total_average = total
 
         # Plotting
@@ -80,6 +80,6 @@ if __name__ == '__main__':
         plt.pie(list(averages.values()), labels=keys, autopct='%1.1f%%', startangle=90)
         plt.title('Average Execution with average time '+str(total_average))
 
-        plt.show()
+        plt.savefig("timing.png")
             
 
