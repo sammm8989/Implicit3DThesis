@@ -1,0 +1,62 @@
+2024-05-15 11:19:36,558 INFO    MainThread:992819 [wandb_init.py:_log_setup():293] Logging user logs to wandb/run-20240515_111936-f899qe8u/logs/debug.log
+2024-05-15 11:19:36,558 INFO    MainThread:992819 [wandb_init.py:_log_setup():294] Logging internal logs to wandb/run-20240515_111936-f899qe8u/logs/debug-internal.log
+2024-05-15 11:19:36,558 INFO    MainThread:992819 [wandb_setup.py:_flush():69] setting env: {}
+2024-05-15 11:19:36,558 INFO    MainThread:992819 [wandb_setup.py:_flush():69] setting user settings: {'email': 'samwinant@gmail.com'}
+2024-05-15 11:19:36,558 INFO    MainThread:992819 [wandb_setup.py:_flush():69] multiprocessing start_methods=fork,spawn,forkserver
+2024-05-15 11:19:37,598 INFO    MainThread:992819 [wandb_run.py:_console_start():1290] atexit reg
+2024-05-15 11:19:37,598 INFO    MainThread:992819 [wandb_run.py:_redirect():1160] redirect: SettingsConsole.REDIRECT
+2024-05-15 11:19:37,599 INFO    MainThread:992819 [wandb_run.py:_redirect():1163] Redirecting console.
+2024-05-15 11:19:37,599 INFO    MainThread:992819 [redirect.py:install():196] install start
+2024-05-15 11:19:37,599 INFO    MainThread:992819 [redirect.py:install():211] install stop
+2024-05-15 11:19:37,599 INFO    MainThread:992819 [redirect.py:install():196] install start
+2024-05-15 11:19:37,599 INFO    MainThread:992819 [redirect.py:install():211] install stop
+2024-05-15 11:19:37,599 INFO    MainThread:992819 [wandb_run.py:_redirect():1207] Redirects installed.
+2024-05-15 11:19:41,776 INFO    MainThread:992819 [wandb_run.py:_atexit_cleanup():1263] got exitcode: 1
+2024-05-15 11:19:41,776 INFO    MainThread:992819 [wandb_run.py:_restore():1235] restore
+2024-05-15 11:19:41,776 INFO    MainThread:992819 [redirect.py:uninstall():215] uninstall start
+2024-05-15 11:19:41,776 INFO    MainThread:992819 [redirect.py:_stop():264] _stop: stdout
+2024-05-15 11:19:41,777 INFO    MainThread:992819 [redirect.py:_stop():270] _stop closed: stdout
+2024-05-15 11:19:41,777 INFO    stdout    :992819 [redirect.py:_pipe_relay():119] relay done saw last write: stdout
+2024-05-15 11:19:41,777 INFO    stdout    :992819 [redirect.py:_pipe_relay():135] relay done done: stdout
+2024-05-15 11:19:41,777 INFO    MainThread:992819 [redirect.py:_stop():276] _stop joined: stdout
+2024-05-15 11:19:41,777 INFO    MainThread:992819 [redirect.py:_stop():278] _stop rd closed: stdout
+2024-05-15 11:19:41,777 INFO    MainThread:992819 [redirect.py:uninstall():219] uninstall done
+2024-05-15 11:19:41,777 INFO    MainThread:992819 [redirect.py:uninstall():215] uninstall start
+2024-05-15 11:19:41,778 INFO    MainThread:992819 [redirect.py:_stop():264] _stop: stderr
+2024-05-15 11:19:41,778 INFO    MainThread:992819 [redirect.py:_stop():270] _stop closed: stderr
+2024-05-15 11:19:41,778 INFO    stderr    :992819 [redirect.py:_pipe_relay():119] relay done saw last write: stderr
+2024-05-15 11:19:41,778 INFO    stderr    :992819 [redirect.py:_pipe_relay():135] relay done done: stderr
+2024-05-15 11:19:41,778 INFO    MainThread:992819 [redirect.py:_stop():276] _stop joined: stderr
+2024-05-15 11:19:41,778 INFO    MainThread:992819 [redirect.py:_stop():278] _stop rd closed: stderr
+2024-05-15 11:19:41,778 INFO    MainThread:992819 [redirect.py:uninstall():219] uninstall done
+2024-05-15 11:19:41,780 INFO    MainThread:992819 [wandb_run.py:_wait_for_finish():1377] got exit ret: uuid: "62edc8d5b56042538937e08a261d8261"
+response {
+  poll_exit_response {
+    file_counts {
+      wandb_count: 1
+    }
+    pusher_stats {
+      uploaded_bytes: 516
+      total_bytes: 516
+    }
+  }
+}
+
+2024-05-15 11:19:43,782 INFO    MainThread:992819 [wandb_run.py:_wait_for_finish():1377] got exit ret: uuid: "d0522ffdcaff4439ac7fab2a02ef0643"
+response {
+  poll_exit_response {
+    done: true
+    exit_result {
+    }
+    file_counts {
+      wandb_count: 5
+    }
+    pusher_stats {
+      uploaded_bytes: 15632
+      total_bytes: 15632
+    }
+  }
+}
+
+2024-05-15 11:19:44,837 INFO    MainThread:992819 [wandb_run.py:_show_files():1586] logging synced files
+2024-05-15 11:19:44,837 INFO    MainThread:992819 [internal.py:handle_exit():137] Internal process exited

@@ -1,0 +1,18 @@
+{
+    "os": "Linux-6.5.0-28-generic-x86_64-with-debian-bookworm-sid",
+    "python": "3.6.10",
+    "heartbeatAt": "2024-05-15T09:19:37.589254",
+    "startedAt": "2024-05-15T09:19:36.556432",
+    "docker": null,
+    "gpu": "NVIDIA GeForce GTX 1650 Ti",
+    "gpu_count": 1,
+    "cpu_count": 12,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "codePath": "transfer.py",
+    "program": "transfer.py",
+    "host": "Sam",
+    "username": "sam",
+    "executable": "/home/sam/anaconda3/envs/Im3D/bin/python"
+}
