@@ -42,11 +42,11 @@ data_transforms = transforms.Compose([
 ])
 
      
-def load_2D_Detection(num_class):
+def load_2D_model():
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn()
     in_features = model.roi_heads.box_predictor.cls_score.in_features
-    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_class)
-    model.load_state_dict(torch.load('fine_tuned.pth'))
+    model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 41)
+    model.load_state_dict(torch.load("fine_tuned.pth"))
     model.eval()
     return model
 
@@ -59,7 +59,7 @@ def get_bounding_boxes(photo, threshold):
 
     with torch.no_grad():
         prediction = objectDetector(image_tensor)
-
+    
     bdb2D_pos = []
     size_cls = []
     for i in range(len(prediction[0]["boxes"])):
@@ -173,7 +173,7 @@ def initiate(cfg_begin):
 
     checkpoint.parse_checkpoint()
 
-    objectDetector = load_2D_Detection(len(NYU40CLASSES))
+    objectDetector = load_2D_model()
     
     net.train(cfg.config['mode'] == 'train')
     objectDetector.to(device)
