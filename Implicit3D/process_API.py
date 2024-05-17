@@ -59,7 +59,7 @@ def get_bounding_boxes(photo, threshold):
 
     with torch.no_grad():
         prediction = objectDetector(image_tensor)
-    
+
     bdb2D_pos = []
     size_cls = []
     for i in range(len(prediction[0]["boxes"])):
@@ -96,6 +96,8 @@ def load_demo_data(device,image,cam_K):
     boxes = dict()
 
     bdb2D_pos, size_cls = get_bounding_boxes(image, 0.7)
+    if not size_cls:
+        return False
     # obtain geometric features
     boxes['g_feature'] = get_g_features(bdb2D_pos)
 
@@ -214,6 +216,8 @@ def run(image, camera):
     global zip_time
     start = time()
     data = load_demo_data(device,image,camera)
+    if(data == False):
+        return False
     twodet.append(time() - start)
     #print data to asses response time
     #print("TwoDetections = " + str(twodet))

@@ -56,9 +56,11 @@ def upload_photo():
     #print("preprocess = " + str(preprocess))
    
     compressed_data = run(image,array)
+    if(compressed_data == False):
+        return jsonify({'error': 'No 2D detections'})
      
     return compressed_data
 if __name__ == '__main__':
-    app.run(debug=False, host = "192.168.0.24")
+    app.run(debug=False, host = "localhost")
 
 
