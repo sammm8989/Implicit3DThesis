@@ -1,3 +1,4 @@
+#based on https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html
 import numpy as np
 import cv2 as cv
 from matplotlib import pyplot as plt
